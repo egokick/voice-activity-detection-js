@@ -42,30 +42,78 @@ async function processAudioData(audioData, session) {
 }
 
 
-
-
-// Example usage
 async function main() {
     const session = await loadModel();
+    const canvas = document.getElementById('audioCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Buffers to store audio values
+    const audioBuffer = new Array(canvas.width).fill(0);
+    const volumeBuffer = new Array(canvas.width).fill(0);
+
     navigator.mediaDevices.getUserMedia({ audio: true, video: false })
         .then(stream => {
             const audioContext = new AudioContext();
             const source = audioContext.createMediaStreamSource(stream);
             const processor = audioContext.createScriptProcessor(4096, 1, 1);
-            
+
             source.connect(processor);
             processor.connect(audioContext.destination);
 
             processor.onaudioprocess = async function(e) {
                 const audioData = e.inputBuffer.getChannelData(0);
                 const outputs = await processAudioData(audioData, session);
-                console.log(outputs.output.data[0]);
-                
+                const value = outputs.output.data[0];
+
+                // Update the audio data buffer
+                audioBuffer.push(value);
+                audioBuffer.shift();
+
+                // Calculate and update the volume buffer
+                const volume = calculateRMS(audioData);
+                volumeBuffer.push(volume);
+                volumeBuffer.shift();
+
+                // Draw both graphs
+                drawGraph(ctx, audioBuffer, canvas.width, canvas.height / 2, 0);
+                drawGraph(ctx, volumeBuffer, canvas.width, canvas.height / 2, canvas.height / 2);
             };
         })
         .catch(err => {
             console.error('Error accessing media devices.', err);
         });
+}
+
+function calculateRMS(buffer) {
+    let sum = 0;
+    for (let i = 0; i < buffer.length; i++) {
+        sum += buffer[i] * buffer[i];
+    }
+    return Math.sqrt(sum / buffer.length);
+}
+
+function drawGraph(ctx, buffer, width, height, yOffset) {
+    // Clear the canvas area for this graph
+    ctx.clearRect(0, yOffset, width, height);
+
+    // Begin the line path
+    ctx.beginPath();
+    for (let i = 0; i < buffer.length; i++) {
+        const x = i;
+        const y = (1 - buffer[i]) * height + yOffset;
+
+        // Move to the next point
+        if (i === 0) {
+            ctx.moveTo(x, y);
+        } else {
+            ctx.lineTo(x, y);
+        }
+    }
+
+    // Draw the line
+    ctx.strokeStyle = '#00ff00'; // Different color for volume
+    ctx.lineWidth = 2;
+    ctx.stroke();
 }
 
 main();

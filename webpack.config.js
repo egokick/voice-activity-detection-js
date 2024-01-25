@@ -11,6 +11,8 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         { from: 'index.html', to: 'index.html' },
+        { from: path.resolve(__dirname, 'node_modules/onnxruntime-web/dist/ort-wasm-simd.wasm'), to: 'ort-wasm-simd.wasm' },
+
         // Add other assets to copy if necessary
       ],
     }),

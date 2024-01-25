@@ -1,1 +1,3 @@
 ﻿node_modules
+dist/index.html
+dist/ort-wasm-simd.wasm

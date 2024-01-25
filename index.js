@@ -4,7 +4,7 @@ import * as ort from 'onnxruntime-web';
   
 // Function to load the ONNX model
 async function loadModel() {
-    const session = await ort.InferenceSession.create('./files/silero_vad.onnx');
+    const session = await ort.InferenceSession.create('silero_vad.onnx');
     return session;
 }
 

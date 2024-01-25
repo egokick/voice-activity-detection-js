@@ -18,15 +18,10 @@ The following image shows the Voice Activity Detection system in action. Notice 
 
 ![Example of Voice Activity Detection](example.jpg)
 
-## Usage
+## Install
 
 To use this VAD in your project, include the ONNX model file and the associated JavaScript code that handles the audio processing and VAD inference.
 
 1. run javascript-install.bat ( npm install )
 2. run javascript-run.bat ( npm run build && npm run start )
-3. This will open a browser, enable your microphone and inspect the console logs (f12)
-
-
-For more detailed instructions and documentation on how to incorporate this VAD into your applications, refer to the included documentation and code comments.
-
- 
+3. This will open a browser. Enable your microphone and inspect the console logs (f12)
